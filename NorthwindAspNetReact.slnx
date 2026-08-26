@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="northwindaspnetreact.client/northwindaspnetreact.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="NorthwindAspNetReact.Server/NorthwindAspNetReact.Server.csproj" />
+</Solution>
