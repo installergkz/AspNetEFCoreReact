@@ -6,6 +6,13 @@ namespace NorthwindAspNetReact.Server.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        private readonly IOrderService _orderService;
+
+        public WeatherForecastController(IOrderService orderService)
+        {
+            _orderService = orderService;
+        }
+
         private static readonly string[] Summaries =
         [
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -22,5 +29,39 @@ namespace NorthwindAspNetReact.Server.Controllers
             })
             .ToArray();
         }
+
+        //public class OrderShort
+        //{
+        //    public int Id { get; set; }
+        //    public string CustomerId { get; set; }
+        //    public int EmployeeId { get; set; }
+        //    public DateTime OrderDate { get; set; }
+
+        //}
+
+        //[HttpGet("Orders/")]
+        //public IEnumerable<OrderShort> GetOrders()
+        //{
+        //    var result = _orderService.GenericRepository.GetAll(o => o.OrderId == 10248 || o.OrderId == 10249).ToArray();
+
+        //    var orders = new List<OrderShort>();
+
+        //    foreach (var item in result)
+        //    {
+        //        var order = new OrderShort { Id = item.OrderId, CustomerId = item.CustomerId, EmployeeId = item.EmployeeId.GetValueOrDefault(), OrderDate = item.OrderDate.Value.Date };
+        //        orders.Add(order);
+        //    }
+
+        //    return orders;
+        //}
+
+        //[HttpGet("Orders/")]
+        //public IEnumerable<object> GetOrders()
+        //{
+        //    var result = _orderService.GenericRepository.GetAll(o => o.OrderId == 10248 || o.OrderId == 10249);
+
+        //    foreach (var item in result)
+        //        yield return new { Id = item.OrderId, item.CustomerId, item.EmployeeId, item.OrderDate };
+        //}
     }
 }
