@@ -41,8 +41,8 @@ public partial class NorthwindContext : DbContext
 
     public virtual DbSet<Territory> Territories { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=HOMEPC;Initial Catalog=Northwind;Integrated Security=True;Encrypt=True");
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //    => optionsBuilder.UseSqlServer("Data Source = HOMEPC; Initial Catalog = Northwind; Integrated Security = True; TrustServerCertificate = True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
