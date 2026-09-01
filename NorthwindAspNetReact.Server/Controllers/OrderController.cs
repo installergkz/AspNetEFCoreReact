@@ -26,12 +26,32 @@ namespace NorthwindAspNetReact.Server.Controllers
         //    _orderService = new OrderService(orderRepository);
         //}
 
+        [HttpGet("GetCustomerIds")]
+        public async Task<IActionResult> GetCustomerIds()
+        {
+            var result = new string[] { "ALFKI", "ANATR", "ANTON" };
+
+            //await _orderService.GenericRepository.FindAsync(id);
+
+            try
+            {
+                //var result = await _orderService.GetOrderWithDetailsAsync(id);
+                //var result = await _orderService.GenericRepository.FindAsync(id);//.GetOrderWithDetailsAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
             try
             {
-                var result = _orderService.GenericRepository.GetAllAsync().Take(5);
+                //var result = _orderService.GenericRepository.GetAllAsync();
+                var result = _orderService.GenericRepository.GetAllAsync().OrderByDescending(o => o?.OrderId).Take(5);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -92,22 +112,22 @@ namespace NorthwindAspNetReact.Server.Controllers
         //    yield return new { Id = item.OrderId, item.CustomerId, item.EmployeeId, OrderDate = item.OrderDate.Value.ToShortDateString() };
         //}
 
-        //[HttpGet("{id:int}")]
-        //public async Task<IActionResult> GetOrderWithDetailsAsync(int id)
-        //{
-        //    //await _orderService.GenericRepository.FindAsync(id);
+        [HttpGet("{id:int}", Name="GetOrderWithDetails")]
+        public async Task<IActionResult> GetOrderWithDetailsAsync(int id)
+        {
+            //await _orderService.GenericRepository.FindAsync(id);
 
-        //    try
-        //    {
-        //        //var result = await _orderService.GetOrderWithDetailsAsync(id);
-        //        var result = await _orderService.GenericRepository.FindAsync(id);//.GetOrderWithDetailsAsync(id);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+            try
+            {
+                //var result = await _orderService.GetOrderWithDetailsAsync(id);
+                var result = await _orderService.GenericRepository.FindAsync(id);//.GetOrderWithDetailsAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         //[HttpGet("details/{orderId:int}/{productId:int?}")]
         //public async Task<IActionResult> GetOrderDetailsAsync(int orderId, int? productId)
@@ -137,38 +157,36 @@ namespace NorthwindAspNetReact.Server.Controllers
         //    }
         //}
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateAsync(Order order)
-        //{
-        //    try
-        //    {
-        //        var resultNewOrderIdAsync = await _orderService.CreateAsync(order);
-        //        order.Id = resultNewOrderIdAsync.GetValueOrDefault();
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(Order order)
+        {
+            try
+            {
+                var resultNewOrderIdAsync = await _orderService.GenericRepository.CreateAsync(order);
+                //order.Id = resultNewOrderIdAsync.GetValueOrDefault();
 
-        //        return CreatedAtAction("GetOrderWithDetails", new { id = resultNewOrderIdAsync.GetValueOrDefault() }, order);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+                return CreatedAtAction("GetOrderWithDetails", new { id = resultNewOrderIdAsync.OrderId }, order);
+                //return CreatedAtAction(nameof(GetOrderWithDetailsAsync), new { id = 10248}, order);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        //[HttpDelete("{id:int}")]
-        //public async Task<IActionResult> DeleteAsync(int id)
-        //{
-        //    try
-        //    {
-        //        var order = await _orderService.DeleteAsync(id);
-        //        if (order == null)
-        //            return NotFound();
-
-        //        return Ok(order);
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            try
+            {
+                await _orderService.GenericRepository.DeleteAsync(id);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         //[HttpPut]
         //public async Task<IActionResult> UpdateOrderAsync(Order order)
