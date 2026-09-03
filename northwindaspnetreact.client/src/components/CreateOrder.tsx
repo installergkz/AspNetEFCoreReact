@@ -1,40 +1,44 @@
 import { useState, useEffect } from 'react';
 import './CreateOrder.css';
 
-interface FormData {
-    customerId: string,
-    employeeId: number,
-    orderDate: string | null,
-    shipVia: 0,
+interface Order {
+    customerId: string;
+    employeeId: number;
+    orderDate: string | null;
+    shipVia: number;
 }
 
 const CreateOrder = () => {
-    const [formData, setFormData] = useState<FormData>({
-        customerId: '',
-        employeeId: 0,
-        orderDate: new Date().toISOString(),
-        shipVia: 0,
-    });
+
+    // const [order, setOrder] = useState<Order>({
+    //     customerId: '',
+    //     employeeId: 0,
+    //     orderDate: new Date().toISOString(),
+    //     shipVia: 0,
+    // });
+
+    const [order, setOrder] = useState<Partial<Order>>({});
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-
     const [customerIds, setCustomerIds] = useState([]);
 
     useEffect(() => {
         getCustomerIds();
     }, []);
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setOrder(prevState => ({ ...prevState, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setOrder(prevState => ({ ...prevState, [name]: value }))
+    };
+
+    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
@@ -47,7 +51,7 @@ const CreateOrder = () => {
                     'Content-Type': 'application/json',
                     //'Authorization': 'Bearer your-token-here'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(order)
             });
 
             if (!response.ok) {
@@ -57,8 +61,8 @@ const CreateOrder = () => {
             const data = await response.json();
             console.log('Заказ создан:', data);
             setSuccess(true);
-            setFormData({ customerId: '', employeeId: 0, orderDate: new Date().toISOString(), shipVia: 0 });
-        } catch (err) {
+            setOrder({ customerId: '', employeeId: 0, orderDate: new Date().toISOString(), shipVia: 0 });
+        } catch (err ) {
             setError(err.message);
         } finally {
             setLoading(false);
@@ -114,16 +118,6 @@ const CreateOrder = () => {
     //     </div>
     // );
 
-    // const styles = {
-    //     container: {
-    //         display: "flex",
-    //         justifyContent: "center",  // Centers the content horizontally
-    //         alignItems: "center",      // Centers the content vertically
-    //         height: "100vh",           // Full viewport height
-    //         textAlign: "center"        // Centers the text inside the div
-    //     }
-    // };
-
     return (
         <>
             <div className="container text-center h5 mt-4">
@@ -149,7 +143,7 @@ const CreateOrder = () => {
 
                                         <div className="form-group">
                                             <label htmlFor="customerId" className="form-label">CustomerId:</label>
-                                            <select name="customerId" id="customerId" value={formData.customerId} onChange={handleChange}>
+                                            <select name="customerId" id="customerId" value={order.customerId || ''} onChange={handleSelectChange}>
                                                 <option value="">Выберите заказчика</option>
                                                 {customerIds.map(customerId => <option key={customerId} value={customerId}>{customerId}</option>)}
                                             </select>
@@ -161,7 +155,7 @@ const CreateOrder = () => {
                                                 type="number"
                                                 id="employeeId"
                                                 name="employeeId"
-                                                value={formData.employeeId}
+                                                value={order.employeeId || 0}
                                                 onChange={handleChange}
                                                 disabled={loading}
                                             />
@@ -173,7 +167,7 @@ const CreateOrder = () => {
                                                 type="date"
                                                 id="orderDate"
                                                 name="orderDate"
-                                                value={formData.orderDate?.toString()}
+                                                value={order.orderDate?.toString().slice(0, 10) || ''}
                                                 onChange={handleChange}
                                                 required
                                                 disabled={loading}
@@ -186,7 +180,7 @@ const CreateOrder = () => {
                                                 type="number"
                                                 id="shipVia"
                                                 name="shipVia"
-                                                value={formData.shipVia}
+                                                value={order.shipVia || 0}
                                                 onChange={handleChange}
                                                 required
                                                 disabled={loading}
@@ -194,7 +188,7 @@ const CreateOrder = () => {
                                         </div>
 
                                         <div className="form-group form-button">
-                                            <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'Adding...' : 'Add Item'}</button>
+                                            <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'Сохранение...' : 'Сохранить'}</button>
                                         </div>
 
                                     </form>

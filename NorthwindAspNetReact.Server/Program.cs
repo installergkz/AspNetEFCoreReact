@@ -11,6 +11,7 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(connection));
 
 services.AddTransient<IGenericRepository<Order>, GenericRepository<Order>>();
+services.AddTransient<IOrderRepository, OrderRepository>();
 //services.AddTransient<NorthwindContext>();
 //services.AddTransient(typeof(IGenericRepository<Order>), typeof(GenericRepository<Order>));
 //services.AddTransient<IGenericService<Order>, OrderService>();

@@ -19,46 +19,72 @@ namespace NorthwindAspNetReact.Server.DAL.Repositories
 
         public OrderRepository(NorthwindContext dbContext) : base(dbContext)
         {
-            //dbContext ??= new NorthwindContext();
-
+            //_dbContext = dbContext ?? new NorthwindContext();
+            _dbContext = dbContext;
             _dbSet = dbContext.Set<Order>();
         }
 
-        public IQueryable<OrderDetail?> GetOrderDetails(int orderId, int? productId)
+        public IQueryable<OrderDetail?> GetOrderDetails(int orderId)
         {
-            var details = _dbSet.Include(o => o.OrderDetails).AsNoTracking().Where(o => o.OrderId == orderId).Select(o => o.OrderDetails).Cast<OrderDetail>(); ;
-
-            if (productId.GetValueOrDefault() != 0)
-                details = details.Where(d => d.ProductId == productId);
-
-            return details;
+            return _dbContext.OrderDetails.AsNoTracking().Include(d => d.Product).ThenInclude(p => p.Category)
+                .Where(o => o.OrderId == orderId).AsQueryable();
         }
 
-        public IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId, int? productId)
+        public async Task<OrderDetail?> GetOrderDetailAsync(int orderId, int productId)
         {
-            throw new NotImplementedException();
-
-            //await foreach (var item in _dbSet.Include(o => o.OrderDetails).ThenInclude(d => d.Product).AsNoTracking().AsAsyncEnumerable())
-            //    yield return item;
-
-            //var details = _dbSet.Include(o => o.OrderDetails).AsNoTracking().Where(o => o.OrderId == orderId).Select(o => o.OrderDetails).Cast<OrderDetail>();
-
-            //if (productId.GetValueOrDefault() != 0)
-            //    details = details.Where(d => d.ProductId == productId);
-
-            //for
-
-            //return details;
+            return await _dbContext.OrderDetails.AsNoTracking().Include(d => d.Product).ThenInclude(p => p.Category)
+                .FirstOrDefaultAsync(d => d.OrderId == orderId && d.ProductId == productId);
         }
 
-        public Task UpdateOrderDetailAsync(OrderDetail orderDetail)
+        public async IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId)
         {
-            throw new NotImplementedException();
+            var details = _dbContext.OrderDetails.AsNoTracking().Include(d => d.Product).ThenInclude(p => p.Category)
+                .Where(d => d.OrderId == orderId).ToAsyncEnumerable();
+
+            await foreach (var item in details)
+                yield return item;
         }
 
-        public Task UpdateOrderDetailsAsync(IEnumerable<OrderDetail> orderDetails)
+        //public async IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId, int? productId)
+        //{
+        //    var details = _dbSet.Include(o => o.OrderDetails).ThenInclude(d => d.Product).ThenInclude(p => p.Category).AsNoTracking()
+        //        .FirstOrDefault(o => o.OrderId == orderId)?.OrderDetails.Where(d => productId.GetValueOrDefault() == 0 || d.ProductId == productId).ToAsyncEnumerable();
+
+        //    await foreach (var item in details)
+        //        yield return item;
+        //}
+
+        public async Task<OrderDetail?> CreateOrderDetailAsync(OrderDetail orderDetail)
         {
-            throw new NotImplementedException();
+            //var order = await FindAsync(orderDetail.OrderId);
+            //order?.OrderDetails.Add(orderDetail);
+
+            await _dbContext.AddAsync(orderDetail);
+            await _dbContext.SaveChangesAsync();
+            return orderDetail;// await _orderRepository.CreateOrderDetailAsync(detail);
+        }
+
+        public async Task UpdateOrderDetailAsync(OrderDetail orderDetail)
+        {
+            if (orderDetail == null)
+                throw new ArgumentException("Entity not found.");
+
+            _dbContext.Entry(orderDetail).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<int?> DeleteOrderDetailsAsync(int orderId, int? productId)
+        {
+            return await _dbContext.OrderDetails.Where(d => d.OrderId == orderId && (productId.GetValueOrDefault() == 0 || d.ProductId == productId)).ExecuteDeleteAsync();
+
+            //_dbContext.RemoveRange(details);
+            //await _dbContext.SaveChangesAsync();
+            //var details = _dbContext.FindAsync<OrderDetail>(orderId, (productId.GetValueOrDefault() == 0 || d.ProductId == productId)).AsAsyncEnumerable();
+            //await foreach (var item in details)
+            //{
+            //    _dbContext.Remove(item);
+            //    _dbContext.SaveChanges();
+            //}
         }
 
         //public virtual void Dispose(bool disposing)

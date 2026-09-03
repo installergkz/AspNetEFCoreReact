@@ -6,12 +6,10 @@ const Navbar = () => {
         <>
             <nav className="navbar navbar-expand-lg">
                 <div className="container">
-                    <Link className="navbar-brand fw-bold " to="/">React CRUD OPERATION WITH BOOT Example</Link>
+                    <Link className="navbar-brand fw-bold " to="/">Главная страница</Link>
                     <div className="d-flex">
                         <Link className="nav-link " to="order/add">Создать заказ</Link>&nbsp;&nbsp;&nbsp;
-                        { }
                         <Link className="nav-link " to="order/get">Заказы</Link>&nbsp;&nbsp;&nbsp;
-                       
                     </div>
                 </div>
             </nav>

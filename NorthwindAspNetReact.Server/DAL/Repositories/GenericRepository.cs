@@ -11,7 +11,7 @@ namespace NorthwindAspNetReact.Server.DAL.Repositories
 
         public GenericRepository(NorthwindContext dbContext)
         {
-            dbContext ??= new NorthwindContext();
+            //_dbContext = dbContext ?? new NorthwindContext();
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<TEntity>();
         }
@@ -56,7 +56,7 @@ namespace NorthwindAspNetReact.Server.DAL.Repositories
                 throw new ArgumentException("Entity not found.");
 
             _dbContext.Entry(entity).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(TEntity entity)
@@ -65,14 +65,14 @@ namespace NorthwindAspNetReact.Server.DAL.Repositories
                 throw new ArgumentException("Entity not found.");
 
             _dbSet.Remove(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id) ?? throw new ArgumentException("Entity not found.");
             _dbSet.Remove(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         //public virtual void Dispose(bool disposing)

@@ -30,12 +30,21 @@ function GetOrders() {
             console.log("ERROR delete order!!!");
     }
 
-    const handleEdit = (idFromParam) => {
+    const handleEdit = (orderIdParam: number) => {
         //F alert(`Handle Edit for student with ID: ${id}`);
 
         // Trigger navigation to the update page using useNavigate
         // USING PATH VARIABLE
-        navigate(`/update/${idFromParam}`)
+        navigate(`/order/update/${orderIdParam}`)
+
+    }
+
+    const handleShowDetails = (orderIdParam: number) => {
+        //F alert(`Handle Edit for student with ID: ${id}`);
+
+        // Trigger navigation to the update page using useNavigate
+        // USING PATH VARIABLE
+        navigate(`/order/getDetails/${orderIdParam}`)
 
     }
 
@@ -80,6 +89,7 @@ function GetOrders() {
                     <th scope="col">CustomerId</th>
                     <th scope="col">EmployeeId</th>
                     <th scope="col">OrderDate</th>
+                    <th scope="col">Details</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -91,9 +101,11 @@ function GetOrders() {
                     <td>{order.employeeId}</td>
                     <td>{order.orderDate}</td>
                     <td>
-                        <button className="btn btn-warning btn-md mr-2" onClick={() => handleEdit(order.orderId)}>Edit with path variable</button>
-                        <button className="btn btn-danger btn-md" onClick={() => handleDelete(order.orderId)}>Delete</button>
-{/*                         <button className="btn btn-success btn-md mr-2" onClick={() => handleEditQueryParam(order.orderId)}>Edit with query-param</button> */}
+                            <button className="btn btn-success btn-md mr-2" onClick={() => handleShowDetails(order.orderId)}>Показать детали</button>
+                    </td>
+                    <td>
+                        <button className="btn btn-warning btn-md mr-2" onClick={() => handleEdit(order.orderId)}>Редактировать</button>
+                        <button className="btn btn-danger btn-md" onClick={() => handleDelete(order.orderId)}>Удалить</button>
                     </td>
                 </tr>)}
             </tbody>
