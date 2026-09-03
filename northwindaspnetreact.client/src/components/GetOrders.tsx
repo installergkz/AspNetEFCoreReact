@@ -57,29 +57,6 @@ function GetOrders() {
 
     // }
 
-    // const contents = orders === undefined
-    //     ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-    //     : <table className="table table-striped" aria-labelledby="tableLabel">
-    //         <thead>
-    //             <tr>
-    //                 <th>Id</th>
-    //                 <th>CustomerId</th>
-    //                 <th>EmployeeId</th>
-    //                 <th>OrderDate</th>
-    //             </tr>
-    //         </thead>
-    //         <tbody>
-    //             {orders.map(order =>
-    //                 <tr key={order.orderId}>
-    //                     <td>{order.orderId}</td>
-    //                     <td>{order.customerId}</td>
-    //                     <td>{order.employeeId}</td>
-    //                     <td>{order.orderDate}</td>
-    //                 </tr>
-    //             )}
-    //         </tbody>
-    //     </table>;
-
     const contents = orders === undefined
         ? <p><em> Loading...Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
         : <table className="table table-bordered">

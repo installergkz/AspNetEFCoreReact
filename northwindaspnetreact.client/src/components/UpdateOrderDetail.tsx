@@ -10,21 +10,7 @@ interface OrderDetail {
     discount: number;
     productId: number;
     productName: string;
-    //categoryId: number;
-    //categoryName: string;
 }
-
-// interface OrderDetail {
-//     orderId: number;
-//     unitPrice: number;
-//     quantity: number;
-//     discount: number;
-//     productId: number;
-// }
-// interface Product {
-//     id: number;
-//     name: string;
-// }
 
 // interface Products {
 //     [key: number]: string;
@@ -72,12 +58,8 @@ const UpdateOrderDetail = () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            //const data = await response.json();
             console.log('Деталь заказа обновлена');
             setSuccess(true);
-            //setOrderDetail({ orderId: 0, productId: 0, unitPrice: 0, quantity: 0, discount: 0 });
-            //setOrderDetail(prevState => ({ ...prevState, unitPrice: 0, quantity: 0, discount: 0 }));
             navigate(`/order/getDetails/${orderIdParam}`)
         } catch (err ) {
             setError(err.message);
@@ -182,82 +164,7 @@ const UpdateOrderDetail = () => {
 
                                     {error && <div className="error-message">{error}</div>}
                                     {success && <div className="success-message">Деталь заказ обновлена</div>}
-
                                     {contents}
-
-                                    {/* <form onSubmit={handleSubmit} className="form-container">
-                                        <h2 className="form-heading">Информация о детали заказа</h2>
-
-                                        <div className="form-group">
-                                            <label htmlFor="orderId" className="form-label">OrderId:</label>
-                                            <input
-                                                type="text"
-                                                id="orderId"
-                                                name="orderId"
-                                                value={orderIdParam}
-                                                className="form-input"
-                                                readOnly
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="product" className="form-label">Product:</label>
-                                            <input
-                                                type="text"
-                                                id="product"
-                                                name="product"
-                                                value=""
-                                                className="form-input"
-                                                readOnly
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="unitPrice" className="form-label">UnitPrice:</label>
-                                            <input
-                                                type="number"
-                                                id="unitPrice"
-                                                name="unitPrice"
-                                                value=""
-                                                onChange={handleChange}
-                                                disabled={loading}
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="quantity" className="form-label">Quantity:</label>
-                                            <input
-                                                type="number"
-                                                id="quantity"
-                                                name="quantity"
-                                                value=""
-                                                onChange={handleChange}
-                                                required
-                                                disabled={loading}
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label htmlFor="discount" className="form-label">Discount:</label>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                max="1"
-                                                id="discount"
-                                                name="discount"
-                                                value=""
-                                                onChange={handleChange}
-                                                required
-                                                disabled={loading}
-                                            />
-                                        </div>
-
-                                        <div className="form-group form-button">
-                                            <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'Сохранение...' : 'Сохранить'}</button>
-                                        </div>
-
-                                    </form> */}
                                 </div>
                             }
                         </div>
@@ -281,18 +188,6 @@ const UpdateOrderDetail = () => {
         else
             console.log("ERROR get order detail !!!");
     }
-
-    // async function getOrderDetails(orderId: number) {
-    //     console.log(`idFromParam: ${orderId}`);
-    //     const response = await fetch(`/api/order/details/${orderId}`);
-    //     if (response.ok) {
-    //         console.log("SUCCESS get order details !!!");
-    //         const data = await response.json();
-    //         setOrderDetails(data);
-    //     }
-    //     else
-    //         console.log("ERROR get order details !!!");
-    // }
 };
 
 export default UpdateOrderDetail;

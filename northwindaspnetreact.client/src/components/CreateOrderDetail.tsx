@@ -10,10 +10,6 @@ interface OrderDetail {
     discount: number;
     productId: number;
 }
-// interface Product {
-//     id: number;
-//     name: string;
-// }
 
 interface Products {
     [key: number]: string;
@@ -34,8 +30,6 @@ const CreateOrderDetail = () => {
     useEffect(() => {
         getProducts();
     }, []);
-
-    //console.log('products123:', products);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -185,7 +179,6 @@ const CreateOrderDetail = () => {
         if (response.ok) {
             console.log("SUCCESS GetProducts");
             const data = await response.json();
-            //const product = JSON.parse(data) as Product;
             setProducts(data);
         }
         else

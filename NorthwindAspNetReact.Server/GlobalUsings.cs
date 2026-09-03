@@ -5,6 +5,7 @@ global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.OpenApi;
+global using Microsoft.EntityFrameworkCore;
 
 global using NorthwindAspNetReact.Server.DAL;
 global using NorthwindAspNetReact.Server.DAL.Interfaces;

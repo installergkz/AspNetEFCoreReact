@@ -1,6 +1,5 @@
 ﻿namespace NorthwindAspNetReact.Server.Services.Interfaces
 {
-    //public interface IOrderService : IGenericService<Order>
     public interface IOrderService// : IGenericService<Order>
     {
         public IOrderRepository OrderRepository { get; }

@@ -90,8 +90,6 @@ namespace NorthwindAspNetReact.Server.Controllers
         [HttpGet("{id:int}", Name="GetOrder")]
         public async Task<IActionResult> GetOrderAsync(int id)
         {
-            //await _orderService.GenericRepository.FindAsync(id);
-
             try
             {
                 //var result = await _orderService.GetOrderWithDetailsAsync(id);
@@ -141,10 +139,8 @@ namespace NorthwindAspNetReact.Server.Controllers
             try
             {
                 var result = await _orderService.OrderRepository.CreateAsync(order);
-                //order.Id = resultNewOrderIdAsync.GetValueOrDefault();
 
                 return CreatedAtAction("GetOrder", new { id = result?.OrderId }, order);
-                //return CreatedAtAction(nameof(GetOrderWithDetailsAsync), new { id = 10248}, order);
             }
             catch (Exception ex)
             {
@@ -216,7 +212,6 @@ namespace NorthwindAspNetReact.Server.Controllers
         {
             try
             {
-                //var result = _orderService.OrderRepository.GetOrderDetails(orderId, productId);
                 var deletedCount = await _orderService.OrderRepository.DeleteOrderDetailsAsync(orderId, productId);
                 return Ok(deletedCount);
             }
@@ -225,10 +220,7 @@ namespace NorthwindAspNetReact.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        
-
-        
+   
 
     }
 }

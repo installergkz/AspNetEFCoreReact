@@ -137,19 +137,7 @@ function GetOrderDetails() {
         else
             console.log("ERROR get order details !!!");
     }
-
-    // async function getOrders() {
-    //     const response = await fetch('/api/order');
-    //     if (response.ok) {
-    //         console.log("SUCCESS order!!!");
-    //         const data = await response.json();
-    //         setOrders(data);
-    //     }
-    //     else
-    //         console.log("ERROR order!!!");
-    // }
-
-    
+   
 }
 
 export default GetOrderDetails;

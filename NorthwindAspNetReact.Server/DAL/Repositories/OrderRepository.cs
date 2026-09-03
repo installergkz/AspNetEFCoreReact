@@ -1,21 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace NorthwindAspNetReact.Server.DAL.Repositories
+﻿namespace NorthwindAspNetReact.Server.DAL.Repositories
 {
     public class OrderRepository : GenericRepository<Order>, IOrderRepository
     {
         //private bool _disposed = false;
-        //private readonly IDataBaseWorker _dataBaseWorker;
+
         private readonly NorthwindContext _dbContext;
         private readonly DbSet<Order> _dbSet;
-
-        //public OrderRepository(IDataBaseWorker dataBaseWorker, NorthwindContext dbContext)
-        //{
-        //    _dataBaseWorker = dataBaseWorker;
-
-        //    _dbContext = dbContext;
-        //    _dbSet = _dbContext.Set<Order>();
-        //}
 
         public OrderRepository(NorthwindContext dbContext) : base(dbContext)
         {
@@ -45,23 +35,11 @@ namespace NorthwindAspNetReact.Server.DAL.Repositories
                 yield return item;
         }
 
-        //public async IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId, int? productId)
-        //{
-        //    var details = _dbSet.Include(o => o.OrderDetails).ThenInclude(d => d.Product).ThenInclude(p => p.Category).AsNoTracking()
-        //        .FirstOrDefault(o => o.OrderId == orderId)?.OrderDetails.Where(d => productId.GetValueOrDefault() == 0 || d.ProductId == productId).ToAsyncEnumerable();
-
-        //    await foreach (var item in details)
-        //        yield return item;
-        //}
-
         public async Task<OrderDetail?> CreateOrderDetailAsync(OrderDetail orderDetail)
         {
-            //var order = await FindAsync(orderDetail.OrderId);
-            //order?.OrderDetails.Add(orderDetail);
-
             await _dbContext.AddAsync(orderDetail);
             await _dbContext.SaveChangesAsync();
-            return orderDetail;// await _orderRepository.CreateOrderDetailAsync(detail);
+            return orderDetail;
         }
 
         public async Task UpdateOrderDetailAsync(OrderDetail orderDetail)

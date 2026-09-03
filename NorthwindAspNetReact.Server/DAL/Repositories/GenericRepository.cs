@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace NorthwindAspNetReact.Server.DAL.Repositories
+﻿namespace NorthwindAspNetReact.Server.DAL.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {

@@ -69,55 +69,6 @@ const CreateOrder = () => {
         }
     };
 
-    // return (
-    //     <div className="form-container">
-    //         <h2>Новый заказ</h2>
-
-    //         {error && <div className="error-message">{error}</div>}
-    //         {success && <div className="success-message"> Заказ создан.</div>}
-
-    //         <form onSubmit={handleSubmit}>
-
-    //             <div className="form-group">
-    //                 <label htmlFor="customerId">CustomerId:</label>
-    //                 <select name="customerId" value={formData.customerId} onChange={handleChange}>
-    //                     <option value="">Select customerId</option>
-    //                     {customerIds.map(customerId => <option key={customerId} value={customerId}>{customerId}</option>)}
-    //                 </select>
-    //             </div>
-
-    //             <div className="form-group">
-    //                 <label htmlFor="employeeId">EmployeeId:</label>
-    //                 <input
-    //                     type="number"
-    //                     id="employeeId"
-    //                     name="employeeId"
-    //                     value={formData.employeeId}
-    //                     onChange={handleChange}
-    //                     disabled={loading}
-    //                 />
-    //             </div>
-
-    //             <div className="form-group">
-    //                 <label htmlFor="shipVia">ShipVia:</label>
-    //                 <input
-    //                     type="number"
-    //                     id="shipVia"
-    //                     name="shipVia"
-    //                     value={formData.shipVia}
-    //                     onChange={handleChange}
-    //                     required
-    //                     disabled={loading}
-    //                 />
-    //             </div>
-
-    //             <button type="submit" disabled={loading}>
-    //                 {loading ? 'Adding...' : 'Add Item'}
-    //             </button>
-    //         </form>
-    //     </div>
-    // );
-
     return (
         <>
             <div className="container text-center h5 mt-4">
