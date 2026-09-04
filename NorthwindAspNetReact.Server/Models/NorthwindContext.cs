@@ -135,7 +135,7 @@ public partial class NorthwindContext : DbContext
             entity.Property(e => e.Quantity).HasDefaultValue((short)1, "DF_Order_Details_Quantity");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Order_Details_Orders");
 
             entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails)
