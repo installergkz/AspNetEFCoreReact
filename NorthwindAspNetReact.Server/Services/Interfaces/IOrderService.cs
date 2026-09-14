@@ -8,7 +8,8 @@
         //public Task<Order?> GetOrderWithDetailsAsync(int id);
         
         public Task<OrderDetailDto?> GetOrderDetailAsync(int orderId, int productId);
-        public IAsyncEnumerable<OrderDetailDto?> GetOrderDetailsAsync(int orderId);
+        //public IAsyncEnumerable<OrderDetailDto?> GetOrderDetailsAsync(int orderId);
+        public IAsyncEnumerable<OrderDetailDto?> GetOrderDetailsAsync(int orderId, int? productId);
         public IQueryable<OrderDetailDto?> GetOrderDetails(int orderId);
         public Task<OrderDetail?> CreateOrderDetailAsync(OrderDetailDto orderDetail);
         //public Task UpdateOrderDetailAsync(OrderDetailDto orderDetail);

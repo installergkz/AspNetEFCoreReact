@@ -1,17 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-//import './index.css'
-//import App from './App.tsx'
-import NorthwindApp from './NorthwindApp'
+import { Provider } from 'react-redux'
+import { store } from './app/store'
+import './index.css'
+import { App } from './app/App'
 
-// createRoot(document.getElementById('weatherForecast_root')!).render(
-//   <StrictMode>
-//     <App />
-//   </StrictMode>,
-// )
-
-createRoot(document.getElementById('northwind_root')!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-        <NorthwindApp />
+    <Provider store={store}>
+            <App />
+        </Provider>
   </StrictMode>,
 )

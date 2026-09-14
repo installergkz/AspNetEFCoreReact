@@ -50,9 +50,31 @@ namespace NorthwindAspNetReact.Server.Services
             return detailDto;
         }
 
-        public async IAsyncEnumerable<OrderDetailDto?> GetOrderDetailsAsync(int orderId)
+        //public async IAsyncEnumerable<OrderDetailDto?> GetOrderDetailsAsync(int orderId)
+        //{
+        //    var orderDetails = _orderRepository.GetOrderDetailsAsync(orderId);
+
+        //    await foreach (var detail in orderDetails)
+        //    {
+        //        var detailDto = new OrderDetailDto()
+        //        {
+        //            OrderId = detail.OrderId,
+        //            ProductId = detail.ProductId,
+        //            UnitPrice = detail.UnitPrice,
+        //            Discount = detail.Discount,
+        //            Quantity = detail.Quantity,
+        //            ProductName = detail.Product.ProductName,
+        //            CategoryId = detail.Product.CategoryId,
+        //            CategoryName = detail.Product.Category.CategoryName
+        //        };
+
+        //        yield return detailDto;
+        //    }
+        //}
+
+        public async IAsyncEnumerable<OrderDetailDto?> GetOrderDetailsAsync(int orderId, int? productId)
         {
-            var orderDetails = _orderRepository.GetOrderDetailsAsync(orderId);
+            var orderDetails = _orderRepository.GetOrderDetailsAsync(orderId, productId);
 
             await foreach (var detail in orderDetails)
             {

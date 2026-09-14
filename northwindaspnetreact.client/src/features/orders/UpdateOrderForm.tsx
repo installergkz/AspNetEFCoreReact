@@ -1,32 +1,33 @@
-import { useState, useEffect } from 'react';
-import './CreateOrder.css';
+import { useState } from 'react';
+import { useNavigate } from "react-router";
+import { useUpdateOrderMutation, useGetCustomerIdsQuery } from './ordersApi';
+import './AddOrder.css';
 
 interface Order {
+    orderId: number;
     customerId: string;
     employeeId: number;
     orderDate: string | null;
     shipVia: number;
 }
 
-const CreateOrder = () => {
+export const UpdateOrderForm = ({ initialData }) => {
 
-    // const [order, setOrder] = useState<Order>({
-    //     customerId: '',
-    //     employeeId: 0,
-    //     orderDate: new Date().toISOString(),
-    //     shipVia: 0,
-    // });
+    const [order, setOrder] = useState<Order>(initialData);
 
-    const [order, setOrder] = useState<Partial<Order>>({});
+    const {
+        data: customerIds,          // Данные, полученные с сервера (при успешном запросе)
+        error: customersError,                // Объект ошибки, если запрос провалился
+        //isLoading,            // true, когда запрос выполняется в первый раз
+        //isFetching,           // true, когда запрос выполняется (включая повторные)
+        isSuccess: isCustomersSuccess,            // true, если запрос завершился успешно
+        isError: isCustomersError,              // true, если запрос завершился ошибкой
+        //refetch,              // Функция для принудительного повторного запроса
+    } = useGetCustomerIdsQuery(/* можно передать параметры, если эндпоинт их требует */);
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-    const [customerIds, setCustomerIds] = useState([]);
-
-    useEffect(() => {
-        getCustomerIds();
-    }, []);
+    // Хук для создания пользователя
+    const [updateOrder, { isLoading: isUpdating, isSuccess: isUpdateSuccess }] = useUpdateOrderMutation();
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -40,32 +41,17 @@ const CreateOrder = () => {
 
     const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
         try {
-            const response = await fetch('/api/order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer your-token-here'
-                },
-                body: JSON.stringify(order)
-            });
+          // Отправляем нового заказа на сервер
+          await updateOrder(order).unwrap();
+          // Если мутация успешна, RTK Query автоматически инвалидирует тег 'Order'
+          // Это заставит useGetOrdersQuery в компоненте OrdersList перезапросить данные!
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Заказ создан:', data);
-            setSuccess(true);
-            setOrder({ customerId: '', employeeId: 0, orderDate: new Date().toISOString(), shipVia: 0 });
-        } catch (err ) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            // При вызове useNavigate омпонент размонтируется. Сбрасывать состояние перед размонтированием не нужно — React сам его выбросит.
+            navigate('/northwind/orders')
+        
+        } catch (error) {
+          console.error('Ошибка при обновлении заказа:', error);
         }
     };
 
@@ -76,25 +62,36 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-header  bg-secondary text-white">
-                                Создать новый заказ
+                                Редактировть
                             </div>
-                            {
+                            {isCustomersSuccess && 
+                                (
                                 // Display form after loading finishes
                                 <div className="card-body bg-light">
-                                    {/* <span className="bg-dark text-white text-center">{state.responseData}</span> */}
-                                    {/* <br /> */}
 
-                                    <h2>Новый заказ</h2>
+                                    <h2>Заказ</h2>
 
-                                    {error && <div className="error-message">{error}</div>}
-                                    {success && <div className="success-message"> Заказ создан.</div>}
+                                    { }
+                                    {isUpdateSuccess && <div className="success-message"> Заказ создан.</div>}
 
                                     <form onSubmit={handleSubmit} className="form-container">
                                         <h2 className="form-heading">Информация о заказе</h2>
 
                                         <div className="form-group">
+                                            <label htmlFor="orderId" className="form-label">OrderId:</label>
+                                            <input
+                                                type="text"
+                                                id="orderId"
+                                                name="orderId"
+                                                value={order.orderId || 0}
+                                                className="form-input"
+                                                readOnly
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
                                             <label htmlFor="customerId" className="form-label">CustomerId:</label>
-                                            <select name="customerId" id="customerId" value={order.customerId || ''} onChange={handleSelectChange}>
+                                            <select name="customerId" id="customerId" value={order.customerId || ''} onChange={handleSelectChange} required disabled={isUpdating}>
                                                 <option value="">Выберите заказчика</option>
                                                 {customerIds.map(customerId => <option key={customerId} value={customerId}>{customerId}</option>)}
                                             </select>
@@ -108,7 +105,7 @@ const CreateOrder = () => {
                                                 name="employeeId"
                                                 value={order.employeeId || 0}
                                                 onChange={handleChange}
-                                                disabled={loading}
+                                                disabled={isUpdating}
                                             />
                                         </div>
 
@@ -121,7 +118,7 @@ const CreateOrder = () => {
                                                 value={order.orderDate?.toString().slice(0, 10) || ''}
                                                 onChange={handleChange}
                                                 required
-                                                disabled={loading}
+                                                disabled={isUpdating}
                                             />
                                         </div>
 
@@ -134,17 +131,18 @@ const CreateOrder = () => {
                                                 value={order.shipVia || 0}
                                                 onChange={handleChange}
                                                 required
-                                                disabled={loading}
-                                            />
+                                                disabled={isUpdating}
+                                             />
                                         </div>
 
                                         <div className="form-group form-button">
-                                            <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'Сохранение...' : 'Сохранить'}</button>
+                                            <button type="submit" className="btn-submit" disabled={isUpdating}>{isUpdating ? 'Сохранение...' : 'Сохранить'}</button>
                                         </div>
 
                                     </form>
                                 </div>
-                            }
+                                )
+                               }
                         </div>
                     </div>
                 </div>
@@ -153,17 +151,4 @@ const CreateOrder = () => {
         </>
     );
 
-    async function getCustomerIds() {
-        console.log("getCustomerIds start");
-        const response = await fetch('/api/order/GetCustomerIds');
-        if (response.ok) {
-            console.log("SUCCESS getCustomerIds");
-            const data = await response.json();
-            setCustomerIds(data);
-        }
-        else
-            console.log("ERROR getCustomerIds");
-    }
 };
-
-export default CreateOrder;

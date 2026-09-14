@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams, } from "react-router";
-import './CreateOrder.css';
-import './Navbar.css';
+import { useCreateOrderDetailMutation, useGetProductsQuery } from './orderDetailsApi';
+import './AddOrder.css';
+//import './Navbar.css';
 
 interface OrderDetail {
     orderId: number;
@@ -11,25 +12,28 @@ interface OrderDetail {
     productId: number;
 }
 
-interface Products {
-    [key: number]: string;
-}
+// interface Products {
+//     [key: number]: string;
+// }
 
-// interface Product extends Record<number, string> { }
-
-const CreateOrderDetail = () => {
+export const AddOrderDetail = () => {
 
     const navigate = useNavigate();
     const { orderIdParam } = useParams();
-    const [products, setProducts] = useState<Products>([]);
     const [orderDetail, setOrderDetail] = useState<Partial<OrderDetail>>({ orderId: parseInt(orderIdParam || '0') });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
 
-    useEffect(() => {
-        getProducts();
-    }, []);
+    const {
+        data: products,          // Данные, полученные с сервера (при успешном запросе)
+        error,                // Объект ошибки, если запрос провалился
+        //isLoading,            // true, когда запрос выполняется в первый раз
+        //isFetching,           // true, когда запрос выполняется (включая повторные)
+        isSuccess: isSuccessProducts,            // true, если запрос завершился успешно
+        isError,              // true, если запрос завершился ошибкой
+        //refetch,              // Функция для принудительного повторного запроса
+    } = useGetProductsQuery(0);
+
+  // Хук для создания пользователя
+    const [createOrderDetail, { isLoading, isSuccess }] = useCreateOrderDetailMutation();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -42,37 +46,20 @@ const CreateOrderDetail = () => {
     };
 
     const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
+    e.preventDefault();
+    try {
+      // Отправляем нового заказа на сервер
+        await createOrderDetail(orderDetail).unwrap();
+      // Если мутация успешна, RTK Query автоматически инвалидирует тег 'Order'
+      // Это заставит useGetOrdersQuery в компоненте OrdersList перезапросить данные!
 
-        try {
-            const response = await fetch('/api/order/details', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer your-token-here'
-                },
-                body: JSON.stringify(orderDetail)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Деталь заказа создана:', data);
-            setSuccess(true);
-            //setOrderDetail({ orderId: 0, productId: 0, unitPrice: 0, quantity: 0, discount: 0 });
-            setOrderDetail(prevState => ({ ...prevState, orderId: 0, productId: 0, unitPrice: 0, quantity: 0, discount: 0 }));
-            navigate(`/order/getDetails/${orderIdParam}`)
-        } catch (err ) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+      // Очищаем форму
+        setOrderDetail({});
+        navigate(`/northwind/orders/details/${orderIdParam}`)
+    } catch (err) {
+      console.error('Ошибка при создании детали заказа:', err);
+    }
+  };
 
     return (
         <>
@@ -82,17 +69,17 @@ const CreateOrderDetail = () => {
                         <div className="card">
                             <div className="card-header  bg-secondary text-white">
                                 Создать деталь заказа
+{/*                                 {isError && (<div className="error-message">{error}</div>)} */}
                             </div>
-                            {
+                            {isSuccessProducts && products &&
+                                (
                                 // Display form after loading finishes
                                 <div className="card-body bg-light">
-                                    {/* <span className="bg-dark text-white text-center">{state.responseData}</span> */}
-                                    {/* <br /> */}
 
-                               {/*      <h2>Новый заказ</h2> */}
+                                {/*     <h2>Новый заказ</h2> */}
 
-                                    {error && <div className="error-message">{error}</div>}
-                                    {success && <div className="success-message">Деталь заказ создана</div>}
+                              {/*       {isError && (<div className="error-message">{error}</div>)} */}
+                                    {isSuccess && <div className="success-message"> Заказ создан.</div>}
 
                                     <form onSubmit={handleSubmit} className="form-container">
                                         <h2 className="form-heading">Информация о детали заказа</h2>
@@ -125,7 +112,7 @@ const CreateOrderDetail = () => {
                                                 name="unitPrice"
                                                 value={orderDetail.unitPrice || 0}
                                                 onChange={handleChange}
-                                                disabled={loading}
+                                                disabled={isLoading}
                                             />
                                         </div>
 
@@ -138,7 +125,7 @@ const CreateOrderDetail = () => {
                                                 value={orderDetail.quantity || 0}
                                                 onChange={handleChange}
                                                 required
-                                                disabled={loading}
+                                                disabled={isLoading}
                                             />
                                         </div>
 
@@ -154,17 +141,18 @@ const CreateOrderDetail = () => {
                                                 value={orderDetail.discount || 0}
                                                 onChange={handleChange}
                                                 required
-                                                disabled={loading}
+                                                disabled={isLoading}
                                             />
                                         </div>
 
                                         <div className="form-group form-button">
-                                            <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'Сохранение...' : 'Сохранить'}</button>
+                                            <button type="submit" className="btn-submit" disabled={isLoading}>{isLoading ? 'Сохранение...' : 'Сохранить'}</button>
                                         </div>
 
                                     </form>
                                 </div>
-                            }
+                                )
+                               }
                         </div>
                     </div>
                 </div>
@@ -173,17 +161,4 @@ const CreateOrderDetail = () => {
         </>
     );
 
-    async function getProducts() {
-        console.log("GetProducts start");
-        const response = await fetch('/api/order/GetProducts');
-        if (response.ok) {
-            console.log("SUCCESS GetProducts");
-            const data = await response.json();
-            setProducts(data);
-        }
-        else
-            console.log("ERROR GetProducts");
-    }
 };
-
-export default CreateOrderDetail;

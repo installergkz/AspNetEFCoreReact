@@ -26,10 +26,19 @@
                 .FirstOrDefaultAsync(d => d.OrderId == orderId && d.ProductId == productId);
         }
 
-        public async IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId)
+        //public async IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId)
+        //{
+        //    var details = _dbContext.OrderDetails.AsNoTracking().Include(d => d.Product).ThenInclude(p => p.Category)
+        //        .Where(d => d.OrderId == orderId).ToAsyncEnumerable();
+
+        //    await foreach (var item in details)
+        //        yield return item;
+        //}
+
+        public async IAsyncEnumerable<OrderDetail?> GetOrderDetailsAsync(int orderId, int? productId)
         {
             var details = _dbContext.OrderDetails.AsNoTracking().Include(d => d.Product).ThenInclude(p => p.Category)
-                .Where(d => d.OrderId == orderId).ToAsyncEnumerable();
+                .Where(d => d.OrderId == orderId && (productId.GetValueOrDefault() == 0 || d.ProductId == productId)).ToAsyncEnumerable();
 
             await foreach (var item in details)
                 yield return item;

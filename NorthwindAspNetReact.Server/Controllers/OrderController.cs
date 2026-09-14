@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace NorthwindAspNetReact.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    //[Route("[controller]")]
+    [Route("northwind/orders")]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -14,6 +15,7 @@ namespace NorthwindAspNetReact.Server.Controllers
         }
 
         [HttpGet("GetCustomerIds")]
+        //[HttpGet("northwind/orders/GetCustomerIds")]
         public async Task<IActionResult> GetCustomerIds()
         {
             var result = new string[] { "ALFKI", "ANATR", "ANTON" };
@@ -102,26 +104,43 @@ namespace NorthwindAspNetReact.Server.Controllers
             }
         }
 
-        [HttpGet("details/{orderId:int}/{productId:int}", Name = "GetOrderDetail")]
-        public async Task<IActionResult> GetOrderDetailAsync(int orderId, int productId)
-        {
-            try
-            {
-                var result = await _orderService.GetOrderDetailAsync(orderId, productId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpGet("details/{orderId:int}/{productId:int}", Name = "GetOrderDetail")]
+        //public async Task<IActionResult> GetOrderDetailAsync(int orderId, [FromQuery] int productId)
+        //{
+        //    try
+        //    {
+        //        var result = await _orderService.GetOrderDetailAsync(orderId, productId);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
-        [HttpGet("details/{orderId:int}")]
-        public async Task<IActionResult> GetOrderDetailsAsync(int orderId)
+        //[HttpGet("details/{orderId:int}")]
+        //public async Task<IActionResult> GetOrderDetailsAsync(int orderId)
+        //{
+        //    try
+        //    {
+        //        var result = _orderService.GetOrderDetailsAsync(orderId);
+
+        //        // IQueryable версия.
+        //        //var result = _orderService.GetOrderDetails(orderId);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
+        [HttpGet("details/{orderId:int}", Name = "GetOrderDetails")]
+        public async Task<IActionResult> GetOrderDetailsAsync(int orderId, [FromQuery] int? productId)
         {
             try
             {
-                var result = _orderService.GetOrderDetailsAsync(orderId);
+                var result = _orderService.GetOrderDetailsAsync(orderId, productId);
 
                 // IQueryable версия.
                 //var result = _orderService.GetOrderDetails(orderId);
@@ -155,7 +174,7 @@ namespace NorthwindAspNetReact.Server.Controllers
             {
                 var result = await _orderService.CreateOrderDetailAsync(orderDetail);
 
-                return CreatedAtAction("GetOrderDetail", new { orderId = result?.OrderId, productId = result?.ProductId }, orderDetail);
+                return CreatedAtAction("GetOrderDetails", new { orderId = result?.OrderId, productId = result?.ProductId }, orderDetail);
             }
             catch (Exception ex)
             {
@@ -207,8 +226,9 @@ namespace NorthwindAspNetReact.Server.Controllers
             }
         }
 
-        [HttpDelete("details/{orderId:int}/{productId:int?}")]
-        public async Task<IActionResult> DeleteOrderDetailsAsync(int orderId, int? productId)
+        //[HttpDelete("details/{orderId:int}$productId={productId:int?}")]
+        [HttpDelete("details/{orderId:int}")]
+        public async Task<IActionResult> DeleteOrderDetailsAsync(int orderId, [FromQuery] int? productId)
         {
             try
             {

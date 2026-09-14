@@ -32,6 +32,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Northwind/Order}");
+
 app.MapFallbackToFile("/index.html");
 
 app.Run();

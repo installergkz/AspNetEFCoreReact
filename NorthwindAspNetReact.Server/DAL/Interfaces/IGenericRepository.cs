@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace NorthwindAspNetReact.Server.DAL.Interfaces
+﻿namespace NorthwindAspNetReact.Server.DAL.Interfaces
 {
     //public interface IEntityRepository<TEntity> : IDisposable where TEntity : class 
     public interface IGenericRepository<TEntity> where TEntity : class 
