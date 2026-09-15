@@ -1,16 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useParams, } from "react-router";
 import { useCreateOrderDetailMutation, useGetProductsQuery } from './orderDetailsApi';
-import './AddOrder.css';
-//import './Navbar.css';
-
-interface OrderDetail {
-    orderId: number;
-    unitPrice: number;
-    quantity: number;
-    discount: number;
-    productId: number;
-}
+import type { OrderDetail } from './orderDetailsApi';
+import '../orders/AddOrder.css';
 
 // interface Products {
 //     [key: number]: string;
@@ -24,13 +16,13 @@ export const AddOrderDetail = () => {
 
     const {
         data: products,          // Данные, полученные с сервера (при успешном запросе)
-        error,                // Объект ошибки, если запрос провалился
+        error: productsError,                // Объект ошибки, если запрос провалился
         //isLoading,            // true, когда запрос выполняется в первый раз
         //isFetching,           // true, когда запрос выполняется (включая повторные)
         isSuccess: isSuccessProducts,            // true, если запрос завершился успешно
-        isError,              // true, если запрос завершился ошибкой
+        isError: isProductsError,              // true, если запрос завершился ошибкой
         //refetch,              // Функция для принудительного повторного запроса
-    } = useGetProductsQuery(0);
+    } = useGetProductsQuery(null);
 
   // Хук для создания пользователя
     const [createOrderDetail, { isLoading, isSuccess }] = useCreateOrderDetailMutation();
@@ -46,19 +38,19 @@ export const AddOrderDetail = () => {
     };
 
     const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      // Отправляем нового заказа на сервер
-        await createOrderDetail(orderDetail).unwrap();
-      // Если мутация успешна, RTK Query автоматически инвалидирует тег 'Order'
-      // Это заставит useGetOrdersQuery в компоненте OrdersList перезапросить данные!
+        e.preventDefault();
+        try {
+          // Отправляем нового заказа на сервер
+            await createOrderDetail(orderDetail).unwrap();
+          // Если мутация успешна, RTK Query автоматически инвалидирует тег 'Order'
+          // Это заставит useGetOrdersQuery в компоненте OrdersList перезапросить данные!
 
-      // Очищаем форму
-        setOrderDetail({});
-        navigate(`/northwind/orders/details/${orderIdParam}`)
-    } catch (err) {
-      console.error('Ошибка при создании детали заказа:', err);
-    }
+          // Очищаем форму
+            setOrderDetail({});
+            navigate(`/northwind/orders/details/${orderIdParam}`)
+        } catch (error) {
+          console.error('Ошибка при создании детали заказа:', error);
+        }
   };
 
     return (

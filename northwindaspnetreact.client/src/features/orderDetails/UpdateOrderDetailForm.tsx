@@ -1,23 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { useUpdateOrderDetailMutation } from './orderDetailsApi';
-import './AddOrder.css';
+import type { OrderDetail } from './orderDetailsApi';
+import '../orders/AddOrder.css';
 
-interface OrderDetail {
-    orderId: number;
-    unitPrice: number;
-    quantity: number;
-    discount: number;
-    productId: number;
-    productName: string;
+interface OrderDetailFormProps {
+    initialData: OrderDetail;
 }
 
 // interface Products {
 //     [key: number]: string;
 // }
 
-export const UpdateOrderDetailForm = ({ initialData }) => {
-    const [orderDetail, setOrderDetail] = useState<OrderDetail>(initialData);
+export const UpdateOrderDetailForm = ({ initialData }: OrderDetailFormProps) => {
+
+    const [orderDetail, setOrderDetail] = useState(initialData);
 
     // Хук для создания пользователя
     const [updateOrderDetail, { isLoading: isUpdating, isSuccess: isSuccessUpdate }] = useUpdateOrderDetailMutation();

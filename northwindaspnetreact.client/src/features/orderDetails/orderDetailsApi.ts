@@ -1,5 +1,28 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
+export interface OrderDetail {
+    orderId: number;
+    unitPrice: number;
+    quantity: number;
+    discount: number;
+    productId: number;
+    productName: string;
+    categoryId: number;
+    categoryName: string;
+}
+
+interface OrderDetailArgs {
+    orderId: number;
+    productId?: number | null;
+};
+
+// хз что лучше - тип или интерфейс.
+//interface Products extends Record<string, string> { };
+// interface Products {
+//     [key: number]: string;
+// }
+type Products = Record<string, string>;
+
 // Определяем наш API-слайс
 export const orderDetailsApi = createApi({
   // Ключ, под которым будет храниться состояние этого API в сторе
@@ -13,29 +36,33 @@ export const orderDetailsApi = createApi({
     tagTypes: ['OrderDetail'],
   // Конечные точки (endpoints) нашего API
   endpoints: (builder) => ({
-    // Эндпоинт для получения всех деталей заказа по ИД заказа
-    getOrderDetailsByOrderId: builder.query({
-        query: (orderId) => `/orders/details/${orderId}`, // Относительный путь к endpoint
-      // Указываем, что этот запрос предоставляет данные с тегом 'OrderDetail'
-        providesTags: ['OrderDetail'],
-    }),
-    // Эндпоинт для получения одной детали заказа по ИД заказа и ИД продукта
-    getOrderDetailByOrderIdAndProductId: builder.query({
-        query: ({ orderId, productId }) => `/orders/details/${orderId}?productId=${productId}`,
+    // // Эндпоинт для получения всех деталей заказа по ИД заказа
+    //   getOrderDetailsByOrderId: builder.query<OrderDetail, number>({
+    //     query: (orderId) => `/orders/details/${orderId}`, // Относительный путь к endpoint
+    //   // Указываем, что этот запрос предоставляет данные с тегом 'OrderDetail'
+    //     providesTags: ['OrderDetail'],
+      // }),
+
+      // Эндпоинт для получения деталей заказа по ИД заказа и ИД продукта.
+      getOrderDetails: builder.query<OrderDetail[], OrderDetailArgs>({
+          query: ({ orderId, productId }) => productId ? `/orders/details/${orderId}?productId=${productId}` : `/orders/details/${orderId}`, 
         // Здесь мы используем функцию для точного указания, какие данные предоставляет запрос
         providesTags: (result, error, { orderId, productId }) => [{ type: 'OrderDetail', orderId, productId }],
         //providesTags: (result, error, { orderId, productId }) => [{ type: 'OrderDetail', id: `${orderId}-${productId}` }],
-    }),
+      }),
+
     // Эндпоинт для создания детали заказа (мутация)
       createOrderDetail: builder.mutation({
       query: (newOrderDetail) => ({
             url: '/orders/details',
             method: 'POST',
             body: newOrderDetail,
-      }),
+          }),
+
       // Эта мутация инвалидирует тег 'OrderDetail', вызывая перезапрос всех запросов, которые зависят от него
         invalidatesTags: ['OrderDetail'],
-    }),
+      }),
+
     // Эндпоинт для обновления детали заказа
       // updateOrderDetail: builder.mutation({
       //     query: ({ id, productId, ...patch }) => ({
@@ -50,10 +77,10 @@ export const orderDetailsApi = createApi({
             url: '/orders/details',
             method: 'PUT',
             body: arg,
-      }),
+            }),
       // Точная инвалидация: инвалидируем только конкретную детадь заказа по ИД заказа и ИД продукта
           invalidatesTags: (result, error, arg) => [{ type: 'OrderDetail', orderId: arg.orderId, productId: arg.productId }],
-    }),
+        }),
     // // Эндпоинт для удаления деталей заказа по ИД заказа
     //   deleteOrderDetailsByOrderId: builder.mutation({
     //     query: (orderId) => ({
@@ -62,7 +89,8 @@ export const orderDetailsApi = createApi({
     //   }),
     //   // При удалении инвалидируем весь список, так как он изменился
     //     invalidatesTags: ['OrderDetail'],
-    //   }),
+      //   }),
+
       // Эндпоинт для удаления детали заказа по ИД заказа и ИД продукта
       deleteOrderDetails: builder.mutation({
           query: ({ orderId, productId }) => ({
@@ -75,8 +103,8 @@ export const orderDetailsApi = createApi({
       }),
 
       // Временный эндпоинт для получения продуктов. Потом надо будет сделать свой api.
-      getProducts: builder.query({
-          query: (id) => `/orders/getProducts/${id}`, // Относительный путь к endpoint
+      getProducts: builder.query<Products, number | null>({
+          query: (productId) => productId ? `/orders/getProducts/${productId}` : `orders/getProducts`
       }),
 
   }),
@@ -85,8 +113,7 @@ export const orderDetailsApi = createApi({
 // RTK Query автоматически генерирует хуки для каждого эндпоинта
 // Название формируется так: use + ИмяЭндпоинта + Query/Mutation
 export const {
-  useGetOrderDetailsByOrderIdQuery,
-  useGetOrderDetailByOrderIdAndProductIdQuery,
+  useGetOrderDetailsQuery,
   useCreateOrderDetailMutation,
   useUpdateOrderDetailMutation,
   useDeleteOrderDetailsMutation,

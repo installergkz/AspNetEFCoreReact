@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { useCreateOrderMutation, useGetCustomerIdsQuery } from './ordersApi';
+import type { Order } from './ordersApi';
 import './AddOrder.css';
-
-interface Order {
-    customerId: string;
-    employeeId: number;
-    orderDate: string | null;
-    shipVia: number;
-}
 
 export const AddOrder = () => {
 
-    const [order, setOrder] = useState<Partial<Order>>({});
+    const [order, setOrder] = useState<Partial<Order>>({ employeeId: 1, orderDate: new Date().toISOString().split('T')[0], shipVia: 1 });
     const navigate = useNavigate();
 
     const {
@@ -82,7 +76,7 @@ export const AddOrder = () => {
                                             <label htmlFor="customerId" className="form-label">CustomerId:</label>
                                             <select name="customerId" id="customerId" value={order.customerId || ''} onChange={handleSelectChange} required>
                                                 <option value="">Выберите заказчика</option>
-                                                {customerIds.map(customerId => <option key={customerId} value={customerId}>{customerId}</option>)}
+                                                {customerIds.map(customer => <option key={customer} value={customer}>{customer}</option>)}
                                             </select>
                                         </div>
 
@@ -92,6 +86,8 @@ export const AddOrder = () => {
                                                 type="number"
                                                 id="employeeId"
                                                 name="employeeId"
+                                                min="1"
+                                                max="9"
                                                 value={order.employeeId || 0}
                                                 onChange={handleChange}
                                                 disabled={isLoading}
@@ -117,6 +113,8 @@ export const AddOrder = () => {
                                                 type="number"
                                                 id="shipVia"
                                                 name="shipVia"
+                                                min="1"
+                                                max="3"
                                                 value={order.shipVia || 0}
                                                 onChange={handleChange}
                                                 required

@@ -1,20 +1,10 @@
 import { useNavigate, useParams, Link } from "react-router";
-import { useGetOrderDetailsByOrderIdQuery, useDeleteOrderDetailsMutation } from './orderDetailsApi';
-
-interface OrderDetail {
-    orderId: number;
-    unitPrice: number;
-    quantity: number;
-    discount: number;
-    productId: number;
-    productName: string;
-    categoryId: number;
-    categoryName: string;
-}
+import { useGetOrderDetailsQuery, useDeleteOrderDetailsMutation } from './orderDetailsApi';
 
 export const OrderDetailsList = () => {
 
-    const { orderIdParam } = useParams(); 
+    const { orderIdParam } = useParams();
+    const orderId = Number(orderIdParam);
 
   // Используем хук запроса. Он автоматически вызовет запрос при монтировании компонента.
   const {
@@ -25,7 +15,7 @@ export const OrderDetailsList = () => {
     isSuccess,            // true, если запрос завершился успешно
     isError,              // true, если запрос завершился ошибкой
       refetch,              // Функция для принудительного повторного запроса
-  } = useGetOrderDetailsByOrderIdQuery(orderIdParam);
+  } = useGetOrderDetailsQuery({ orderId, productId: null });
 
     const navigate = useNavigate();
 
@@ -33,20 +23,14 @@ export const OrderDetailsList = () => {
     const [deleteOrderDetail, { isLoading: isDeleting }] = useDeleteOrderDetailsMutation();
 
     const handleEditOrderDetail = (productId: number) => {
-        //F alert(`Handle Edit for student with ID: ${id}`);
-
-        // Trigger navigation to the update page using useNavigate
-        // USING PATH VARIABLE
-        //navigate(`/northwind/orders/details/update/${orderIdParam}/${productId}`)
-        navigate(`/northwind/orders/details/update/${orderIdParam}?productId=${productId}`)
+        navigate(`/northwind/orders/details/update/${orderId}?productId=${productId}`)
     }
 
     const handleDeleteOrderDetail = async (productId: number) => {
-        console.log(orderIdParam, productId);
     try {
       // Вызываем функцию мутации и передаем данные (в данном случае ID)
-        await deleteOrderDetail({ orderId: orderIdParam, productId }).unwrap();
-      // Благодаря invalidatesTags: ['User'], хук useGetUsersQuery автоматически выполнит повторный запрос!
+        await deleteOrderDetail({ orderId, productId }).unwrap();
+      // Благодаря invalidatesTags: ['OrderDetail'], хук useGetOrderDetailsQuery автоматически выполнит повторный запрос!
       // Данные списка пользователей обновятся. Нам не нужно диспатчить никакие экшены.
     } catch (err) {
         console.error('Failed to delete the order detail: ', err);
@@ -56,7 +40,7 @@ export const OrderDetailsList = () => {
   // Рендерим состояние загрузки
   if (isLoading) return <div>Загрузка заказов...</div>;
   // Рендерим состояние ошибки
-    if (isError) return <div>Ошибка: {error.message}</div>;
+  if (isError) return <div>Ошибка: {error && 'message' in error ? error.message : ''}</div>;
 
 
     const contents =
@@ -78,7 +62,7 @@ export const OrderDetailsList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                        {orderDetails.map((detail: OrderDetail, index: number) =>
+                        {orderDetails.map((detail, index: number) =>
                                 <tr key={index}>
                                     { }
                                     <td>{index + 1}</td>
@@ -104,13 +88,13 @@ export const OrderDetailsList = () => {
                 <nav className="navbar navbar-expand-lg">
                     <div className="container">
                         <div className="d-flex">
-                            <Link className="nav-link " to={`/northwind/orders/details/add/${orderIdParam}`}>Добавить деталь заказа</Link>&nbsp;&nbsp;&nbsp;
+                            <Link className="nav-link " to={`/northwind/orders/details/add/${orderId}`}>Добавить деталь заказа</Link>&nbsp;&nbsp;&nbsp;
                         </div>
                     </div>
                 </nav>
             </div>
             <div>
-                <h2 id="tableLabel">Детали заказа №{orderIdParam}</h2>
+                <h2 id="tableLabel">Детали заказа №{orderId}</h2>
                 {contents}
             </div>
         </>

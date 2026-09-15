@@ -1,5 +1,5 @@
 import { useParams, useSearchParams } from "react-router";
-import { useGetOrderDetailByOrderIdAndProductIdQuery } from './orderDetailsApi';
+import { useGetOrderDetailsQuery } from './orderDetailsApi';
 import { UpdateOrderDetailForm } from './UpdateOrderDetailForm';
 
 export const UpdateOrderDetail = () => {
@@ -17,7 +17,7 @@ export const UpdateOrderDetail = () => {
         // isSuccess: isOldOrderDetailSuccess,            // true, если запрос завершился успешно
         // isError: isOldOrderDetailError,              // true, если запрос завершился ошибкой
         // //refetch,              // Функция для принудительного повторного запроса
-    } = useGetOrderDetailByOrderIdAndProductIdQuery({ orderId, productId }, { skip });
+    } = useGetOrderDetailsQuery({ orderId, productId }, { skip });
     //} = useGetOrderDetailByOrderIdAndProductIdQuery({ orderId: parseInt(orderIdParam || '0'), productId: productIdParam, productName: '' }, { skip });
 
     if (isOldOrderDetailLoading || !oldOrderDetails)

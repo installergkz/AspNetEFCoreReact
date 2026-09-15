@@ -1,13 +1,6 @@
 import { useNavigate, Link } from "react-router";
 import { useGetOrdersQuery, useDeleteOrderMutation, } from './ordersApi';
 
-interface Order {
-    orderId: number;
-    customerId: string;
-    employeeId: number;
-    orderDate: string;
-}
-
 export const OrdersList =() => {
     
   // Используем хук запроса. Он автоматически вызовет запрос при монтировании компонента.
@@ -19,16 +12,12 @@ export const OrdersList =() => {
     isSuccess,            // true, если запрос завершился успешно
     isError,              // true, если запрос завершился ошибкой
       refetch,              // Функция для принудительного повторного запроса
-  } = useGetOrdersQuery(/* можно передать параметры, если эндпоинт их требует */);
+  } = useGetOrdersQuery();
 
     const navigate = useNavigate();
 
     // Хук мутации возвращает массив, где первый элемент - это функция-триггер, а второй - объект с состоянием мутации
     const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
-
-    // const handleEditOrder = (orderIdParam: number) => {
-    //     navigate(`/northwind/orders/update/${orderIdParam}`)
-    // }
 
     const handleEditOrder = (orderId: number) => {
         navigate(`/northwind/orders/update/${orderId}`)
@@ -52,7 +41,7 @@ export const OrdersList =() => {
   // Рендерим состояние загрузки
   if (isLoading) return <div>Загрузка заказов...</div>;
   // Рендерим состояние ошибки
-    if (isError) return <div>Ошибка: {error.message}</div>;
+    if (isError) return <div>Ошибка: {error && 'message' in error ? error.message : ''}</div>;
 
     const contents = <div>
         <h2>Список заказов</h2>
@@ -73,7 +62,7 @@ export const OrdersList =() => {
                             </tr>
                         </thead>
                         <tbody>
-                            {orders.map((order: Order) =>
+                            {orders.map((order) =>
                                 <tr key={order.orderId}>
                                     <td>{order.orderId}</td>
                                     <td>{order.customerId}</td>

@@ -1,5 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
+export interface Order {
+    orderId: number;
+    customerId: string;
+    employeeId: number;
+    orderDate: string;
+    shipVia: number;
+}
+
+// interface CustomerIds {
+//     id: string;
+// }
+
 // Определяем наш API-слайс
 export const ordersApi = createApi({
   // Ключ, под которым будет храниться состояние этого API в сторе
@@ -14,13 +26,13 @@ export const ordersApi = createApi({
   // Конечные точки (endpoints) нашего API
   endpoints: (builder) => ({
     // Эндпоинт для получения всех пользователей
-    getOrders: builder.query({
+      getOrders: builder.query<Order[], void>({
       query: () => '/orders', // Относительный путь к endpoint
       // Указываем, что этот запрос предоставляет данные с тегом 'Order'
         providesTags: ['Order'],
     }),
     // Эндпоинт для получения одного пользователя по ID
-    getOrderById: builder.query({
+      getOrderById: builder.query<Order, number>({
         query: (id) => `/orders/${id}`,
       // Здесь мы используем функцию для точного указания, какие данные предоставляет запрос
         providesTags: (result, error, id) => [{ type: 'Order', id }],
@@ -64,7 +76,7 @@ export const ordersApi = createApi({
     }),
 
       // Временный эндпоинт для получения ИД покупателей. Потом надо будет сделать свой api.
-      getCustomerIds: builder.query({
+      getCustomerIds: builder.query<string[], void>({
           query: () => `/orders/getCustomerIds`
       }),
 

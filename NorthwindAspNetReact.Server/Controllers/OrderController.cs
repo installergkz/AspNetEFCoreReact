@@ -46,10 +46,7 @@ namespace NorthwindAspNetReact.Server.Controllers
 
             try
             {
-                if (id.GetValueOrDefault() != 0)
-                    return Ok(result[id.Value]);
-
-                return Ok(result);
+                return id.GetValueOrDefault() != 0 ? Ok(result[id.Value]) : Ok(result);
             }
             catch (Exception ex)
             {

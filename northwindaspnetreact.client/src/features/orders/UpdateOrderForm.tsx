@@ -1,19 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { useUpdateOrderMutation, useGetCustomerIdsQuery } from './ordersApi';
+import type { Order } from './ordersApi';
 import './AddOrder.css';
 
-interface Order {
-    orderId: number;
-    customerId: string;
-    employeeId: number;
-    orderDate: string | null;
-    shipVia: number;
+interface OrderFormProps {
+    initialData: Order;
 }
 
-export const UpdateOrderForm = ({ initialData }) => {
+export const UpdateOrderForm = ({ initialData }: OrderFormProps) => {
 
-    const [order, setOrder] = useState<Order>(initialData);
+    //const [order, setOrder] = useState<Order>(initialData);
+    const [order, setOrder] = useState(initialData);
 
     const {
         data: customerIds,          // Данные, полученные с сервера (при успешном запросе)
@@ -92,7 +90,6 @@ export const UpdateOrderForm = ({ initialData }) => {
                                         <div className="form-group">
                                             <label htmlFor="customerId" className="form-label">CustomerId:</label>
                                             <select name="customerId" id="customerId" value={order.customerId || ''} onChange={handleSelectChange} required disabled={isUpdating}>
-                                                <option value="">Выберите заказчика</option>
                                                 {customerIds.map(customerId => <option key={customerId} value={customerId}>{customerId}</option>)}
                                             </select>
                                         </div>
@@ -103,6 +100,8 @@ export const UpdateOrderForm = ({ initialData }) => {
                                                 type="number"
                                                 id="employeeId"
                                                 name="employeeId"
+                                                min="1"
+                                                max="9"
                                                 value={order.employeeId || 0}
                                                 onChange={handleChange}
                                                 disabled={isUpdating}
@@ -128,6 +127,8 @@ export const UpdateOrderForm = ({ initialData }) => {
                                                 type="number"
                                                 id="shipVia"
                                                 name="shipVia"
+                                                min="1"
+                                                max="3"
                                                 value={order.shipVia || 0}
                                                 onChange={handleChange}
                                                 required
