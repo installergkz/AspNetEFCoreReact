@@ -1,7 +1,7 @@
 # Order Management on Northwind
 
-Веб-приложение для управления заказами на основе классической базы данных **Northwind**.
-Backend — ASP.NET Core Web API + Entity Framework Core + SQL Server.
+Веб-приложение для управления заказами на основе классической базы данных **Northwind**.<br/>
+Backend — ASP.NET Core Web API + Entity Framework Core + SQL Server.<br/>
 Frontend — React + Redux Toolkit.
 
 ## Возможности
@@ -10,3 +10,5 @@ Frontend — React + Redux Toolkit.
 - [x] Создание заказа
 - [x] Редактирование заказа
 - [x] Удаление заказа
+
+**Стадия**: в разработке.
